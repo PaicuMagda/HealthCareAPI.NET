@@ -145,3 +145,4 @@ C:\Users\40759\Desktop\lucrare-disertatie\HealthcareAPI\bin\Debug\net8.0\ru\Micr
 C:\Users\40759\Desktop\lucrare-disertatie\HealthcareAPI\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.Workspaces.resources.dll
 C:\Users\40759\Desktop\lucrare-disertatie\HealthcareAPI\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.resources.dll
 C:\Users\40759\Desktop\lucrare-disertatie\HealthcareAPI\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
+C:\Users\40759\Desktop\lucrare-disertatie\HealthcareAPI\obj\Debug\net8.0\HealthcareAPI.sourcelink.json

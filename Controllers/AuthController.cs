@@ -21,16 +21,29 @@ namespace HealthcareAPI.Controllers
             var doctor = _context.Doctors.FirstOrDefault(d => d.Username == request.Username);
 
             if (doctor == null)
-                return BadRequest(new { message = "Utilizatorul nu există" });
+                return Ok(new { success = false, message = "Utilizatorul nu există" });
 
             if (doctor.Password != request.Password)
-                return BadRequest(new { message = "Parolă incorectă" });
+                return Ok(new { success = false, message = "Parolă incorectă" });
 
-            return Ok(new { success = true, user = doctor });
+            return Ok(
+                new
+                {
+                    success = true,
+                    user = new
+                    {
+                        id = doctor.Id,
+                        username = doctor.Username,
+                        nume = doctor.Name,
+                        role = doctor.Role,
+                        email = doctor.Email,
+                    },
+                }
+            );
         }
 
         [HttpPost("register")]
-        public IActionResult Register(RegisterDoctorRequest request)
+        public IActionResult Register(RegisterRequest request)
         {
             var existingDoctor = _context.Doctors.FirstOrDefault(d =>
                 d.Username == request.Username
@@ -43,14 +56,26 @@ namespace HealthcareAPI.Controllers
             {
                 Username = request.Username,
                 Password = request.Password,
-                Name = request.Name,
                 Email = request.Email,
+                Role = "doctor",
             };
 
             _context.Doctors.Add(doctor);
             _context.SaveChanges();
 
-            return Ok(new { message = "Doctor înregistrat cu succes", doctor = doctor });
+            return Ok(
+                new
+                {
+                    message = "Contul a fost adăugat cu succes!",
+                    user = new
+                    {
+                        id = doctor.Id,
+                        username = doctor.Username,
+                        role = doctor.Role,
+                        email = doctor.Email,
+                    },
+                }
+            );
         }
     }
 }
