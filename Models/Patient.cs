@@ -18,6 +18,7 @@ namespace HealthcareAPI.Models
 
         public string GrupaSanguina { get; set; } = null!;
         public string Rh { get; set; } = null!;
+        public string? Poza { get; set; }
 
         public string BoliCronice { get; set; } = null!;
     }

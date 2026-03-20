@@ -35,6 +35,7 @@ namespace HealthcareAPI.Controllers
                 Oras = patient.Oras,
                 GrupaSanguina = patient.GrupaSanguina,
                 Rh = patient.Rh,
+                Poza = patient.Poza,
                 BoliCronice = patient.BoliCronice,
             };
 
@@ -67,6 +68,7 @@ namespace HealthcareAPI.Controllers
                     p.Oras,
                     p.GrupaSanguina,
                     p.Rh,
+                    p.Poza,
                     p.BoliCronice,
                 })
                 .ToList();
