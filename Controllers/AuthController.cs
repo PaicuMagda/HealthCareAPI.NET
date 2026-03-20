@@ -77,5 +77,25 @@ namespace HealthcareAPI.Controllers
                 }
             );
         }
+
+        [HttpGet("get-doctor-by-id/{id}")]
+        public IActionResult GetDoctorById(int id)
+        {
+            var doctor = _context.Doctors.FirstOrDefault(d => d.Id == id);
+
+            if (doctor == null)
+                return NotFound(new { message = "Doctorul nu a fost găsit" });
+
+            return Ok(
+                new
+                {
+                    id = doctor.Id,
+                    username = doctor.Username,
+                    nume = doctor.Name ?? "",
+                    email = doctor.Email,
+                    role = doctor.Role,
+                }
+            );
+        }
     }
 }

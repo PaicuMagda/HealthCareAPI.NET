@@ -8,5 +8,6 @@ namespace HealthcareAPI.Models
         public string? Name { get; set; }
         public string Email { get; set; } = null!;
         public string Role { get; set; } = "doctor";
+        public List<Patient> Patients { get; set; } = new List<Patient>();
     }
 }
