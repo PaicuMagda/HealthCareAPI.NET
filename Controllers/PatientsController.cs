@@ -21,28 +21,12 @@ namespace HealthcareAPI.Controllers
             var doctor = _context.Doctors.Find(patient.DoctorId);
 
             if (doctor == null)
-                return BadRequest("Doctorul nu există");
+                return BadRequest(new { message = "Doctor not found" });
 
-            var newPatient = new Patient
-            {
-                DoctorId = patient.DoctorId,
-                Nume = patient.Nume,
-                Prenume = patient.Prenume,
-                Cnp = patient.Cnp,
-                Email = patient.Email,
-                Telefon = patient.Telefon,
-                Judet = patient.Judet,
-                Oras = patient.Oras,
-                GrupaSanguina = patient.GrupaSanguina,
-                Rh = patient.Rh,
-                Poza = patient.Poza,
-                BoliCronice = patient.BoliCronice,
-            };
-
-            _context.Patients.Add(newPatient);
+            _context.Patients.Add(patient);
             _context.SaveChanges();
 
-            return Ok(new { success = true, patient = newPatient });
+            return Ok(new { success = true, patient });
         }
 
         [HttpGet("{doctorId}/get-patients")]
@@ -51,7 +35,7 @@ namespace HealthcareAPI.Controllers
             var doctorExists = _context.Doctors.Any(d => d.Id == doctorId);
 
             if (!doctorExists)
-                return NotFound(new { message = "Doctorul nu există" });
+                return NotFound(new { message = "Doctor not found" });
 
             var patients = _context
                 .Patients.Where(p => p.DoctorId == doctorId)
@@ -59,17 +43,56 @@ namespace HealthcareAPI.Controllers
                 {
                     p.Id,
                     p.DoctorId,
-                    p.Nume,
-                    p.Prenume,
+
+                    // Personal Info
+                    p.FirstName,
+                    p.LastName,
                     p.Cnp,
+                    p.BirthDate,
+                    p.Age,
+                    p.Gender,
+                    p.Occupation,
+
+                    // Contact
                     p.Email,
-                    p.Telefon,
-                    p.Judet,
-                    p.Oras,
-                    p.GrupaSanguina,
+                    p.Phone,
+
+                    // Address
+                    p.County,
+                    p.City,
+                    p.Street,
+                    p.Number,
+                    p.Block,
+                    p.Apartment,
+                    p.Staircase,
+                    p.Floor,
+                    p.PostalCode,
+
+                    // Medical Info
+                    p.Weight,
+                    p.Height,
+                    p.BloodType,
                     p.Rh,
-                    p.Poza,
-                    p.BoliCronice,
+
+                    // Insurance
+                    p.InsuranceCompany,
+                    p.InsuranceId,
+
+                    // Medical History
+                    p.ChronicDiseases,
+                    p.Vaccinations,
+                    p.HereditaryDiseases,
+                    p.OtherDiseases,
+
+                    // Lifestyle
+                    p.Diet,
+                    p.PhysicalActivity,
+                    p.Smoker,
+                    p.AlcoholConsumer,
+                    p.DrugConsumer,
+
+                    // Image
+                    p.ProfileImage,
                 })
                 .ToList();
 
