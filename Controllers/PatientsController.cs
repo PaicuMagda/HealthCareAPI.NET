@@ -98,5 +98,72 @@ namespace HealthcareAPI.Controllers
 
             return Ok(patients);
         }
+
+        [HttpPut("update-patient/{id}")]
+        public IActionResult UpdatePatient(int id, Patient updatedPatient)
+        {
+            var patient = _context.Patients.FirstOrDefault(p => p.Id == id);
+
+            if (patient == null)
+                return NotFound(new { message = "Patient not found" });
+
+            // Update fields
+            patient.FirstName = updatedPatient.FirstName;
+            patient.LastName = updatedPatient.LastName;
+            patient.Cnp = updatedPatient.Cnp;
+            patient.BirthDate = updatedPatient.BirthDate;
+            patient.Age = updatedPatient.Age;
+            patient.Gender = updatedPatient.Gender;
+            patient.Occupation = updatedPatient.Occupation;
+
+            patient.Email = updatedPatient.Email;
+            patient.Phone = updatedPatient.Phone;
+
+            patient.County = updatedPatient.County;
+            patient.City = updatedPatient.City;
+            patient.Street = updatedPatient.Street;
+            patient.Number = updatedPatient.Number;
+            patient.Block = updatedPatient.Block;
+            patient.Apartment = updatedPatient.Apartment;
+            patient.Staircase = updatedPatient.Staircase;
+            patient.Floor = updatedPatient.Floor;
+            patient.PostalCode = updatedPatient.PostalCode;
+
+            patient.Weight = updatedPatient.Weight;
+            patient.Height = updatedPatient.Height;
+            patient.BloodType = updatedPatient.BloodType;
+            patient.Rh = updatedPatient.Rh;
+
+            patient.InsuranceCompany = updatedPatient.InsuranceCompany;
+            patient.InsuranceId = updatedPatient.InsuranceId;
+
+            patient.ChronicDiseases = updatedPatient.ChronicDiseases;
+            patient.Vaccinations = updatedPatient.Vaccinations;
+            patient.HereditaryDiseases = updatedPatient.HereditaryDiseases;
+            patient.OtherDiseases = updatedPatient.OtherDiseases;
+
+            patient.Diet = updatedPatient.Diet;
+            patient.PhysicalActivity = updatedPatient.PhysicalActivity;
+            patient.Smoker = updatedPatient.Smoker;
+            patient.AlcoholConsumer = updatedPatient.AlcoholConsumer;
+            patient.DrugConsumer = updatedPatient.DrugConsumer;
+
+            patient.ProfileImage = updatedPatient.ProfileImage;
+
+            _context.SaveChanges();
+
+            return Ok(new { success = true, patient });
+        }
+
+        [HttpGet("get-patient/{cnp}")]
+        public IActionResult GetPatientByCnp(string cnp)
+        {
+            var patient = _context.Patients.FirstOrDefault(p => p.Cnp == cnp);
+
+            if (patient == null)
+                return NotFound();
+
+            return Ok(patient);
+        }
     }
 }
