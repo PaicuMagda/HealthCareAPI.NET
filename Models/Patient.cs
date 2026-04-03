@@ -55,5 +55,6 @@ namespace HealthcareAPI.Models
 
         // Profile Image
         public string? ProfileImage { get; set; }
+        public ICollection<Consultation> Consultations { get; set; } = new List<Consultation>();
     }
 }
