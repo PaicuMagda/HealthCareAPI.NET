@@ -11,14 +11,14 @@ public class Consultation
     public string Cnp { get; set; } = null!;
 
     [Required]
-    public DateTime DataConsultatie { get; set; }
+    public DateTime ConsultationDate { get; set; }
 
     [Required]
-    public string Diagnostic { get; set; } = null!;
+    public string Diagnosis { get; set; } = null!;
 
-    public string? Medicamentatie { get; set; }
+    public string? Medication { get; set; }
 
-    public int NrConsultatie { get; set; }
+    public int ConsultationNumber { get; set; }
 
     [JsonIgnore]
     public Patient Patient { get; set; } = null!;

@@ -19,21 +19,21 @@ public class ConsultationsController : ControllerBase
         var patient = await _context.Patients.FirstOrDefaultAsync(p => p.Cnp == dto.Cnp);
 
         if (patient == null)
-            return NotFound("Pacientul nu există!");
+            return NotFound("Patient does not exist!");
 
         var lastNumber = await _context
             .Consultations.Where(c => c.Cnp == dto.Cnp)
-            .OrderByDescending(c => c.NrConsultatie)
-            .Select(c => c.NrConsultatie)
+            .OrderByDescending(c => c.ConsultationNumber)
+            .Select(c => c.ConsultationNumber)
             .FirstOrDefaultAsync();
 
         var newConsultation = new Consultation
         {
             Cnp = dto.Cnp,
-            DataConsultatie = dto.DataConsultatie,
-            Diagnostic = dto.Diagnostic,
-            Medicamentatie = dto.Medicamentatie,
-            NrConsultatie = lastNumber + 1,
+            ConsultationDate = dto.ConsultationDate,
+            Diagnosis = dto.Diagnosis,
+            Medication = dto.Medication,
+            ConsultationNumber = lastNumber + 1,
         };
 
         _context.Consultations.Add(newConsultation);
@@ -47,21 +47,37 @@ public class ConsultationsController : ControllerBase
     {
         var consultations = await _context.Consultations.Where(c => c.Cnp == cnp).ToListAsync();
 
-        return Ok(new { consultatii = consultations });
+        return Ok(new { consultations });
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateConsultation(int id, Consultation updated)
+    public async Task<IActionResult> UpdateConsultation(int id, UpdateConsultationDto dto)
     {
         var consultation = await _context.Consultations.FindAsync(id);
 
         if (consultation == null)
             return NotFound();
 
-        consultation.Diagnostic = updated.Diagnostic;
-        consultation.Medicamentatie = updated.Medicamentatie;
-        consultation.DataConsultatie = updated.DataConsultatie;
+        consultation.ConsultationDate = dto.ConsultationDate;
+        consultation.Diagnosis = dto.Diagnosis;
+        consultation.Medication = dto.Medication;
 
+        await _context.SaveChangesAsync();
+
+        return Ok(new { success = true });
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteConsultation(int id)
+    {
+        var consultation = await _context.Consultations.FirstOrDefaultAsync(c =>
+            c.ConsultationNumber == id
+        );
+
+        if (consultation == null)
+            return NotFound("Consultation not found");
+
+        _context.Consultations.Remove(consultation);
         await _context.SaveChangesAsync();
 
         return Ok(new { success = true });
