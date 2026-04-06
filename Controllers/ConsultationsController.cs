@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using HealthcareAPI.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +36,8 @@ public class ConsultationsController : ControllerBase
             Diagnosis = dto.Diagnosis,
             Medication = dto.Medication,
             ConsultationNumber = lastNumber + 1,
+            Status = "Draft",
+            CreatedAt = DateTime.UtcNow,
         };
 
         _context.Consultations.Add(newConsultation);
@@ -45,22 +49,50 @@ public class ConsultationsController : ControllerBase
     [HttpGet("{cnp}")]
     public async Task<IActionResult> GetConsultations(string cnp)
     {
-        var consultations = await _context.Consultations.Where(c => c.Cnp == cnp).ToListAsync();
+        var consultations = await _context
+            .Consultations.Where(c => c.Cnp == cnp)
+            .OrderByDescending(c => c.ConsultationDate)
+            .Select(c => new
+            {
+                c.Id,
+                c.Cnp,
+                c.ConsultationNumber,
+                c.ConsultationDate,
+                c.Diagnosis,
+                c.Medication,
+                c.Status,
+                c.CreatedAt,
+                c.UpdatedAt,
+                c.DeletedAt,
+                c.DeletedBy,
+            })
+            .ToListAsync();
 
         return Ok(new { consultations });
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateConsultation(int id, UpdateConsultationDto dto)
+    public async Task<IActionResult> UpdateConsultation(
+        int id,
+        UpdateConsultationDto dto,
+        [FromQuery] string doctorId
+    )
     {
         var consultation = await _context.Consultations.FindAsync(id);
 
         if (consultation == null)
             return NotFound();
 
+        if (consultation.Status == "Finalized")
+            return BadRequest("Consultation is signed and cannot be modified.");
+
+        if (consultation.DeletedAt != null)
+            return BadRequest("Consultation is deleted.");
+
         consultation.ConsultationDate = dto.ConsultationDate;
         consultation.Diagnosis = dto.Diagnosis;
         consultation.Medication = dto.Medication;
+        consultation.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
 
@@ -68,18 +100,56 @@ public class ConsultationsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteConsultation(int id)
+    public async Task<IActionResult> DeleteConsultation(int id, [FromQuery] string doctorId)
     {
-        var consultation = await _context.Consultations.FirstOrDefaultAsync(c =>
-            c.ConsultationNumber == id
-        );
+        var consultation = await _context.Consultations.FirstOrDefaultAsync(c => c.Id == id);
 
         if (consultation == null)
             return NotFound("Consultation not found");
 
-        _context.Consultations.Remove(consultation);
+        if (consultation.DeletedAt != null)
+            return BadRequest("Already deleted");
+
+        consultation.DeletedAt = DateTime.UtcNow;
+        consultation.DeletedBy = doctorId;
+
         await _context.SaveChangesAsync();
 
         return Ok(new { success = true });
+    }
+
+    [HttpPost("sign/{id}")]
+    public async Task<IActionResult> SignConsultation(int id)
+    {
+        var consultation = await _context.Consultations.FindAsync(id);
+
+        if (consultation == null)
+            return NotFound();
+
+        if (consultation.Status == "Finalized")
+            return BadRequest("Already signed");
+
+        if (consultation.DeletedAt != null)
+            return BadRequest("Cannot sign a deleted consultation");
+
+        consultation.Status = "Finalized";
+        consultation.SignedAt = DateTime.UtcNow;
+        consultation.SignedBy = "doctor_id";
+
+        var content =
+            $"{consultation.Cnp}{consultation.ConsultationDate}{consultation.Diagnosis}{consultation.Medication}";
+        consultation.SignatureHash = ComputeHash(content);
+
+        await _context.SaveChangesAsync();
+
+        return Ok(new { success = true });
+    }
+
+    private string ComputeHash(string input)
+    {
+        using var sha256 = SHA256.Create();
+        var bytes = Encoding.UTF8.GetBytes(input);
+        var hash = sha256.ComputeHash(bytes);
+        return Convert.ToBase64String(hash);
     }
 }
