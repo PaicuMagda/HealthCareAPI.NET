@@ -53,6 +53,9 @@ namespace HealthcareAPI.Models
         public bool AlcoholConsumer { get; set; }
         public bool DrugConsumer { get; set; }
 
+        public DateTime? DeletedAt { get; set; }
+        public string? DeletedBy { get; set; }
+
         // Profile Image
         public string? ProfileImage { get; set; }
         public ICollection<Consultation> Consultations { get; set; } = new List<Consultation>();

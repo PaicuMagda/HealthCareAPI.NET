@@ -90,6 +90,9 @@ namespace HealthcareAPI.Controllers
                     p.Smoker,
                     p.AlcoholConsumer,
                     p.DrugConsumer,
+                    p.DeletedAt,
+                    p.DeletedBy,
+                    IsActive = p.DeletedAt == null,
 
                     // Image
                     p.ProfileImage,
@@ -164,6 +167,25 @@ namespace HealthcareAPI.Controllers
                 return NotFound();
 
             return Ok(patient);
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeletePatient(int id, [FromQuery] string doctorId)
+        {
+            var patient = _context.Patients.FirstOrDefault(p => p.Id == id);
+
+            if (patient == null)
+                return NotFound("Patient not found");
+
+            if (patient.DeletedAt != null)
+                return BadRequest("Already deleted");
+
+            patient.DeletedAt = DateTime.UtcNow;
+            patient.DeletedBy = doctorId;
+
+            _context.SaveChanges();
+
+            return Ok(new { success = true });
         }
     }
 }
