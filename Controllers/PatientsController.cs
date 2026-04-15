@@ -161,7 +161,60 @@ namespace HealthcareAPI.Controllers
         [HttpGet("get-patient/{cnp}")]
         public IActionResult GetPatientByCnp(string cnp)
         {
-            var patient = _context.Patients.FirstOrDefault(p => p.Cnp == cnp);
+            var patient = _context
+                .Patients.Where(p => p.Cnp == cnp)
+                .Select(p => new
+                {
+                    p.Id,
+                    p.DoctorId,
+
+                    p.FirstName,
+                    p.LastName,
+                    p.Cnp,
+                    p.BirthDate,
+                    p.Age,
+                    p.Gender,
+                    p.Occupation,
+
+                    p.Email,
+                    p.Phone,
+
+                    p.County,
+                    p.City,
+                    p.Street,
+                    p.Number,
+                    p.Block,
+                    p.Apartment,
+                    p.Staircase,
+                    p.Floor,
+                    p.PostalCode,
+
+                    p.Weight,
+                    p.Height,
+                    p.BloodType,
+                    p.Rh,
+
+                    p.InsuranceCompany,
+                    p.InsuranceId,
+
+                    p.ChronicDiseases,
+                    p.Vaccinations,
+                    p.HereditaryDiseases,
+                    p.OtherDiseases,
+
+                    p.Diet,
+                    p.PhysicalActivity,
+                    p.Smoker,
+                    p.AlcoholConsumer,
+                    p.DrugConsumer,
+
+                    p.DeletedAt,
+                    p.DeletedBy,
+                    IsActive = p.DeletedAt == null,
+
+                    p.ProfileImage,
+                })
+                .FirstOrDefault();
 
             if (patient == null)
                 return NotFound();
@@ -182,6 +235,22 @@ namespace HealthcareAPI.Controllers
 
             patient.DeletedAt = DateTime.UtcNow;
             patient.DeletedBy = doctorId;
+
+            _context.SaveChanges();
+
+            return Ok(new { success = true });
+        }
+
+        [HttpPut("activate/{cnp}")]
+        public IActionResult ActivatePatient(string cnp)
+        {
+            var patient = _context.Patients.FirstOrDefault(p => p.Cnp == cnp);
+
+            if (patient == null)
+                return NotFound("Patient not found");
+
+            patient.DeletedAt = null;
+            patient.DeletedBy = null;
 
             _context.SaveChanges();
 
