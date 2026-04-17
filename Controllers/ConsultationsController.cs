@@ -38,6 +38,8 @@ public class ConsultationsController : ControllerBase
             ConsultationNumber = lastNumber + 1,
             Status = "Draft",
             CreatedAt = DateTime.UtcNow,
+
+            Locations = dto.Locations != null ? string.Join(",", dto.Locations) : null,
         };
 
         _context.Consultations.Add(newConsultation);
@@ -65,6 +67,10 @@ public class ConsultationsController : ControllerBase
                 c.UpdatedAt,
                 c.DeletedAt,
                 c.DeletedBy,
+
+                Locations = c.Locations != null
+                    ? c.Locations.Split(",", StringSplitOptions.RemoveEmptyEntries)
+                    : new string[] { },
             })
             .ToListAsync();
 
@@ -92,6 +98,7 @@ public class ConsultationsController : ControllerBase
         consultation.ConsultationDate = dto.ConsultationDate;
         consultation.Diagnosis = dto.Diagnosis;
         consultation.Medication = dto.Medication;
+        consultation.Locations = dto.Locations != null ? string.Join(",", dto.Locations) : null;
         consultation.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();

@@ -28,6 +28,8 @@ public class Consultation
 
     public string? SignatureHash { get; set; }
 
+    public string? Locations { get; set; }
+
     public DateTime? DeletedAt { get; set; }
     public string? DeletedBy { get; set; }
 
