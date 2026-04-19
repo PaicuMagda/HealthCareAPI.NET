@@ -33,31 +33,44 @@ public class DoctorsController : ControllerBase
                 email = doctor.Email,
                 role = doctor.Role,
                 cnp = doctor.Cnp,
-                password = doctor.Password,
             }
         );
     }
 
     [HttpPut("update-doctor/{id}")]
-    public async Task<IActionResult> UpdateDoctor(int id, [FromBody] Doctor dto)
+    public async Task<IActionResult> UpdateDoctor(int id, [FromBody] UpdateDoctorDto dto)
     {
         var doctor = await _context.Doctors.FindAsync(id);
 
         if (doctor == null)
             return NotFound(new { message = "Doctorul nu a fost găsit" });
 
-        doctor.Username = dto.Username;
-        doctor.FirstName = dto.FirstName;
-        doctor.LastName = dto.LastName;
-        doctor.Email = dto.Email;
-        doctor.Role = dto.Role;
-        doctor.Cnp = dto.Cnp;
-
-        if (!string.IsNullOrEmpty(dto.Password))
-            doctor.Password = dto.Password;
+        doctor.Username = dto.Username ?? doctor.Username;
+        doctor.FirstName = dto.FirstName ?? doctor.FirstName;
+        doctor.LastName = dto.LastName ?? doctor.LastName;
+        doctor.Email = dto.Email ?? doctor.Email;
+        doctor.Cnp = dto.Cnp ?? doctor.Cnp;
 
         await _context.SaveChangesAsync();
 
         return Ok(new { message = "Doctor actualizat cu succes" });
     }
+
+    // [HttpPut("change-password/{id}")]
+    // public async Task<IActionResult> ChangePassword(int id, [FromBody] ChangePasswordDto dto)
+    // {
+    //     var doctor = await _context.Doctors.FindAsync(id);
+
+    //     if (doctor == null)
+    //         return NotFound();
+
+    //     if (!BCrypt.Net.BCrypt.Verify(dto.OldPassword, doctor.Password))
+    //         return BadRequest(new { message = "Parola veche e greșită" });
+
+    //     doctor.Password = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+
+    //     await _context.SaveChangesAsync();
+
+    //     return Ok(new { message = "Parola schimbată" });
+    // }
 }
