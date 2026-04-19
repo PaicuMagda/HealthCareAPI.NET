@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "A5MOSTzKddc=",
+  "dgSpecHash": "9DBu2aad8oM=",
   "success": true,
   "projectFilePath": "C:\\Users\\40759\\Desktop\\lucrare-disertatie\\HealthcareAPI\\HealthcareAPI.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\40759\\.nuget\\packages\\azure.core\\1.50.0\\azure.core.1.50.0.nupkg.sha512",
     "C:\\Users\\40759\\.nuget\\packages\\azure.identity\\1.17.1\\azure.identity.1.17.1.nupkg.sha512",
+    "C:\\Users\\40759\\.nuget\\packages\\bcrypt.net-next\\4.1.0\\bcrypt.net-next.4.1.0.nupkg.sha512",
     "C:\\Users\\40759\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\40759\\.nuget\\packages\\microsoft.aspnetcore.openapi\\8.0.24\\microsoft.aspnetcore.openapi.8.0.24.nupkg.sha512",
     "C:\\Users\\40759\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\8.0.0\\microsoft.bcl.asyncinterfaces.8.0.0.nupkg.sha512",

@@ -1,6 +1,7 @@
 ﻿using HealthcareAPI.Data;
 using HealthcareAPI.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HealthcareAPI.Controllers
 {
@@ -18,18 +19,25 @@ namespace HealthcareAPI.Controllers
         [HttpPost("login")]
         public IActionResult Login(LoginRequest request)
         {
-            var doctor = _context.Doctors.FirstOrDefault(d => d.Username == request.Username);
+            if (
+                string.IsNullOrWhiteSpace(request.Username)
+                || string.IsNullOrWhiteSpace(request.Password)
+            )
+                return BadRequest(new { message = "Date invalide" });
+
+            var doctor = _context
+                .Doctors.AsNoTracking()
+                .FirstOrDefault(d => d.Username.ToLower() == request.Username.ToLower());
 
             if (doctor == null)
-                return Ok(new { success = false, message = "Utilizatorul nu există" });
+                return NotFound(new { message = "Utilizatorul nu există" });
 
-            if (doctor.Password != request.Password)
-                return Ok(new { success = false, message = "Parolă incorectă" });
+            if (!BCrypt.Net.BCrypt.Verify(request.Password, doctor.Password))
+                return Unauthorized(new { message = "Parolă incorectă" });
 
             return Ok(
                 new
                 {
-                    success = true,
                     user = new
                     {
                         id = doctor.Id,
@@ -45,17 +53,23 @@ namespace HealthcareAPI.Controllers
         [HttpPost("register")]
         public IActionResult Register(RegisterRequest request)
         {
+            if (
+                string.IsNullOrWhiteSpace(request.Username)
+                || string.IsNullOrWhiteSpace(request.Password)
+            )
+                return BadRequest(new { message = "Date invalide" });
+
             var existingDoctor = _context.Doctors.FirstOrDefault(d =>
-                d.Username == request.Username
+                d.Username == request.Username || d.Email == request.Email
             );
 
             if (existingDoctor != null)
-                return BadRequest(new { message = "Username deja există" });
+                return BadRequest(new { message = "Username sau email deja există" });
 
             var doctor = new Doctor
             {
                 Username = request.Username,
-                Password = request.Password,
+                Password = BCrypt.Net.BCrypt.HashPassword(request.Password),
                 Email = request.Email,
                 Role = "doctor",
             };
@@ -63,19 +77,7 @@ namespace HealthcareAPI.Controllers
             _context.Doctors.Add(doctor);
             _context.SaveChanges();
 
-            return Ok(
-                new
-                {
-                    message = "Contul a fost adăugat cu succes!",
-                    user = new
-                    {
-                        id = doctor.Id,
-                        username = doctor.Username,
-                        role = doctor.Role,
-                        email = doctor.Email,
-                    },
-                }
-            );
+            return Ok(new { message = "Cont creat!" });
         }
     }
 }

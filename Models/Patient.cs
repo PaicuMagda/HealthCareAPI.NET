@@ -9,7 +9,7 @@ namespace HealthcareAPI.Models
         // Personal Info
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
-        public string Cnp { get; set; } = null!;
+        public string? Cnp { get; set; }
         public DateTime? BirthDate { get; set; }
         public int? Age { get; set; }
         public string? Gender { get; set; }

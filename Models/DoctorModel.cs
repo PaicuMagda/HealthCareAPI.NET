@@ -10,7 +10,7 @@ namespace HealthcareAPI.Models
         public string FullName => $"{FirstName} {LastName}";
         public string Email { get; set; } = null!;
         public string Role { get; set; } = "doctor";
-        public string Cnp { get; set; } = null!;
+        public string? Cnp { get; set; }
         public List<Patient> Patients { get; set; } = new List<Patient>();
     }
 }
