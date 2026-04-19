@@ -38,6 +38,7 @@ namespace HealthcareAPI.Controllers
             return Ok(
                 new
                 {
+                    success = true,
                     user = new
                     {
                         id = doctor.Id,
