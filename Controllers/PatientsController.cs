@@ -23,10 +23,58 @@ namespace HealthcareAPI.Controllers
             if (doctor == null)
                 return BadRequest(new { message = "Doctor not found" });
 
+            patient.DeletedAt = null;
+            patient.DeletedBy = null;
+
             _context.Patients.Add(patient);
             _context.SaveChanges();
 
-            return Ok(new { success = true, patient });
+            return Ok(
+                new
+                {
+                    success = true,
+                    patient = new
+                    {
+                        patient.Id,
+                        patient.DoctorId,
+                        patient.FirstName,
+                        patient.LastName,
+                        patient.Cnp,
+                        patient.BirthDate,
+                        patient.Age,
+                        patient.Gender,
+                        patient.Occupation,
+                        patient.Email,
+                        patient.Phone,
+                        patient.County,
+                        patient.City,
+                        patient.Street,
+                        patient.Number,
+                        patient.Block,
+                        patient.Apartment,
+                        patient.Staircase,
+                        patient.Floor,
+                        patient.PostalCode,
+                        patient.Weight,
+                        patient.Height,
+                        patient.BloodType,
+                        patient.Rh,
+                        patient.InsuranceCompany,
+                        patient.InsuranceId,
+                        patient.ChronicDiseases,
+                        patient.Vaccinations,
+                        patient.HereditaryDiseases,
+                        patient.OtherDiseases,
+                        patient.Diet,
+                        patient.PhysicalActivity,
+                        patient.Smoker,
+                        patient.AlcoholConsumer,
+                        patient.DrugConsumer,
+                        patient.ProfileImage,
+                        IsActive = true,
+                    },
+                }
+            );
         }
 
         [HttpGet("{doctorId}/get-patients")]
