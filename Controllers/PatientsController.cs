@@ -138,11 +138,21 @@ namespace HealthcareAPI.Controllers
                     p.Smoker,
                     p.AlcoholConsumer,
                     p.DrugConsumer,
+
                     p.DeletedAt,
                     p.DeletedBy,
                     IsActive = p.DeletedAt == null,
 
-                    // Image
+                    Consultations = p
+                        .Consultations.Where(c => c.DeletedAt == null)
+                        .Select(c => new
+                        {
+                            c.Id,
+                            c.Diagnosis,
+                            c.Cnp,
+                        })
+                        .ToList(),
+
                     p.ProfileImage,
                 })
                 .ToList();
@@ -216,6 +226,13 @@ namespace HealthcareAPI.Controllers
                     p.Id,
                     p.DoctorId,
 
+                    Doctor = new
+                    {
+                        p.Doctor.Id,
+                        p.Doctor.FirstName,
+                        p.Doctor.LastName,
+                    },
+
                     p.FirstName,
                     p.LastName,
                     p.Cnp,
@@ -259,6 +276,20 @@ namespace HealthcareAPI.Controllers
                     p.DeletedAt,
                     p.DeletedBy,
                     IsActive = p.DeletedAt == null,
+
+                    Consultations = p
+                        .Consultations.Where(c => c.DeletedAt == null)
+                        .Select(c => new
+                        {
+                            c.Id,
+                            c.Diagnosis,
+                            c.Medication,
+                            c.ConsultationDate,
+                            c.Cnp,
+                            c.Locations,
+                            c.ConsultationNumber,
+                        })
+                        .ToList(),
 
                     p.ProfileImage,
                 })

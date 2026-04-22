@@ -6,6 +6,8 @@ namespace HealthcareAPI.Models
 
         public int DoctorId { get; set; }
 
+        public Doctor? Doctor { get; set; } // IMPORTANT: nullable
+
         // Personal Info
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
@@ -56,8 +58,8 @@ namespace HealthcareAPI.Models
         public DateTime? DeletedAt { get; set; }
         public string? DeletedBy { get; set; }
 
-        // Profile Image
         public string? ProfileImage { get; set; }
+
         public ICollection<Consultation> Consultations { get; set; } = new List<Consultation>();
     }
 }
