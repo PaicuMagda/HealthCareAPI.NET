@@ -6,7 +6,7 @@ namespace HealthcareAPI.Models
 
         public int DoctorId { get; set; }
 
-        public Doctor? Doctor { get; set; } // IMPORTANT: nullable
+        public Doctor? Doctor { get; set; }
 
         // Personal Info
         public string FirstName { get; set; } = null!;
