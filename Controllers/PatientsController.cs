@@ -168,7 +168,6 @@ namespace HealthcareAPI.Controllers
             if (patient == null)
                 return NotFound(new { message = "Patient not found" });
 
-            // Update fields
             patient.FirstName = updatedPatient.FirstName;
             patient.LastName = updatedPatient.LastName;
             patient.Cnp = updatedPatient.Cnp;
